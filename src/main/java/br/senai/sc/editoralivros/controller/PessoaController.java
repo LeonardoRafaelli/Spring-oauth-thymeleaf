@@ -71,8 +71,8 @@ public class PessoaController {
 
         System.out.println("Pessoa: " + pessoa);
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        pessoa.setSenha(encoder.encode(pessoa.getSenha()));
+//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//        pessoa.setSenha(encoder.encode(pessoa.getSenha()));
         return ResponseEntity.status(HttpStatus.OK)
                 .body(pessoaService.save(pessoa));
     }
