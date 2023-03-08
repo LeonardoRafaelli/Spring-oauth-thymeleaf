@@ -1,6 +1,5 @@
 package br.senai.sc.editoralivros.security;
 
-import br.senai.sc.editoralivros.model.entity.Pessoa;
 import br.senai.sc.editoralivros.security.service.JpaService;
 import br.senai.sc.editoralivros.security.users.UserJpa;
 import lombok.AllArgsConstructor;
@@ -18,8 +17,8 @@ import java.io.IOException;
 @AllArgsConstructor
 public class AutenticacaoFiltro extends OncePerRequestFilter {
 
-    @Autowired
     private JpaService jpaService;
+    private TokenUtils tokenUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -29,12 +28,14 @@ public class AutenticacaoFiltro extends OncePerRequestFilter {
         } else {
             token = null;
         }
-        Boolean valido = jpaService.validarToken(token);
+        Boolean valido = tokenUtils.validarToken(token);
         if (valido) {
-            UserJpa usuario = jpaService.getUsuario(token);
+            Long usuarioCpf = tokenUtils.getUsuarioCpf(token);
+            UserJpa userJpa = (UserJpa) jpaService.loadUserByUsername(usuarioCpf.toString());
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(usuario.getUsername(),
-                            null, usuario.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userJpa.getUsername(),
+                            null, userJpa.getAuthorities());
+            //
             SecurityContextHolder.getContext().setAuthentication(
                     usernamePasswordAuthenticationToken
             );

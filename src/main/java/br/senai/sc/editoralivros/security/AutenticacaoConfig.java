@@ -3,12 +3,14 @@ package br.senai.sc.editoralivros.security;
 import br.senai.sc.editoralivros.security.service.GoogleService;
 import br.senai.sc.editoralivros.security.service.JpaService;
 import br.senai.sc.editoralivros.security.users.UserJpa;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -29,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Configuration
-@EnableWebSecurity
+@AllArgsConstructor
 public class AutenticacaoConfig {
 
     @Autowired
@@ -38,14 +40,16 @@ public class AutenticacaoConfig {
     @Autowired
     private GoogleService googleService;
 
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .userDetailsService(jpaService)
+                .passwordEncoder(NoOpPasswordEncoder.getInstance());
+    }
+
     // Configura as autorizações de acesso
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(jpaService);
-        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
-        httpSecurity.authenticationProvider(provider);
 
         httpSecurity.authorizeRequests()
                 // Libera o acesso sem autenticação para /login
@@ -57,7 +61,17 @@ public class AutenticacaoConfig {
                 .formLogin().permitAll()
                 .and()
                 .logout().permitAll();
+        httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        httpSecurity.addFilterBefore(new AutenticacaoFiltro(jpaService, new TokenUtils()), UsernamePasswordAuthenticationFilter.class);
+
+
         return httpSecurity.build();
+    }
+
+    // Serve para fazer a injeção de dependência do AuthenticationManager na classe AutenticacaoController
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration ac) throws Exception {
+        return ac.getAuthenticationManager();
     }
 
 }
