@@ -26,18 +26,27 @@ public class JpaService implements UserDetailsService {
 
 
     @Override
-    public UserDetails loadUserByUsername(
-            String username) throws UsernameNotFoundException {
-        Optional<Pessoa> pessoaOptional =
-                pessoaRepository.findByEmail(username);
+    public UserDetails loadUserByUsername( String username) throws UsernameNotFoundException {
+        Optional<Pessoa> pessoaOptional = pessoaRepository.findByEmail(username);
+
+        try {
+            Long cpf = Long.parseLong(username);
+            return loadUserByCPF(cpf);
+        } catch (NumberFormatException e) {
+            pessoaOptional = pessoaRepository.findByEmail(username);
+        }
+
         if (pessoaOptional.isPresent()) {
             return new UserJpa(pessoaOptional.get());
-        } else {
-            pessoaOptional = pessoaRepository.findById(Long.parseLong(username));
+        }
+        throw new UsernameNotFoundException("Usuário não encontrado!");
+    }
 
-            if (pessoaOptional.isPresent()) {
-                return new UserJpa(pessoaOptional.get());
-            }
+
+    public UserDetails loadUserByCPF(Long cpf) throws UsernameNotFoundException {
+        Optional<Pessoa> pessoaOptional = pessoaRepository.findById(cpf);
+        if (pessoaOptional.isPresent()) {
+            return new UserJpa(pessoaOptional.get());
         }
         throw new UsernameNotFoundException("Usuário não encontrado!");
     }

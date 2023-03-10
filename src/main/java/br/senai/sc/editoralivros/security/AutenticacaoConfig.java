@@ -40,6 +40,7 @@ public class AutenticacaoConfig {
     @Autowired
     private GoogleService googleService;
 
+    @Autowired
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .userDetailsService(jpaService)
@@ -53,7 +54,12 @@ public class AutenticacaoConfig {
 
         httpSecurity.authorizeRequests()
                 // Libera o acesso sem autenticação para /login
-                .antMatchers("/editora-livros-api/login","/editora-livros-api/usuarios", "/editora-livros-api/pessoa").permitAll()
+                .antMatchers(
+                        "/editora-livros-api/login",
+                        "/editora-livros-api/usuarios",
+                        "/editora-livros-api/pessoa",
+                        "/login", "/login/auth"
+                        ).permitAll()
                 // Determina que todas as demais requisições terão de ser autenticadas
                 .anyRequest().authenticated()
                 .and().csrf().disable()
