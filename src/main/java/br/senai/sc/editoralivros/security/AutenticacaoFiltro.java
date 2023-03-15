@@ -47,6 +47,7 @@ public class AutenticacaoFiltro extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(
                     usernamePasswordAuthenticationToken
             );
+            filterChain.doFilter(request, response);
             return;
         }
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

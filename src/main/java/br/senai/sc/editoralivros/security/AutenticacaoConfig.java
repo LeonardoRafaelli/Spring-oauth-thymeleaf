@@ -1,5 +1,6 @@
 package br.senai.sc.editoralivros.security;
 
+import br.senai.sc.editoralivros.model.entity.Autor;
 import br.senai.sc.editoralivros.security.service.GoogleService;
 import br.senai.sc.editoralivros.security.service.JpaService;
 import br.senai.sc.editoralivros.security.users.UserJpa;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -54,12 +56,13 @@ public class AutenticacaoConfig {
 
         httpSecurity.authorizeRequests()
                 // Libera o acesso sem autenticação para /login
-                .antMatchers(
-                        "/editora-livros-api/login",
-                        "/editora-livros-api/usuarios",
-                        "/editora-livros-api/pessoa",
-                        "/login", "/login/auth"
-                        ).permitAll()
+                .antMatchers("/login",
+                        "/login/auth",
+                        "/logout",
+                        "/editora-livros-api/pessoa").permitAll()
+                .antMatchers(HttpMethod.POST,
+                        "/editora-livros-api/livro")
+                    .hasAuthority("Autor")
                 // Determina que todas as demais requisições terão de ser autenticadas
                 .anyRequest().authenticated()
                 .and().csrf().disable()

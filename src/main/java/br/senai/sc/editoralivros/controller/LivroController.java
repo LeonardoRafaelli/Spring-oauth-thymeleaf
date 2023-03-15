@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
-@RequestMapping("/editora-livros-api/livro")
 @Controller
+@RequestMapping("/editora-livros-api/livro")
 public class LivroController {
 
     private LivroService livroService;
@@ -37,7 +37,8 @@ public class LivroController {
     @PostMapping
     public ResponseEntity<Object> save(
             @RequestParam("livro") String livroJson,
-            @RequestParam("arquivo") MultipartFile file) {
+            @RequestParam(value = "arquivo", required = false) MultipartFile file) {
+        System.out.println("CHAMOU O POST LIVRO --> " + livroJson);
         LivroUtil util = new LivroUtil();
         Livro livro = util.convertJsonToModel(livroJson);
         if (livroService.existsById(livro.getIsbn())){

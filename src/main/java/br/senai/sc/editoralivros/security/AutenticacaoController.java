@@ -44,12 +44,14 @@ public class AutenticacaoController {
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         System.out.println(authentication.isAuthenticated());
 
+
         System.out.println("Cookie: " + jwt);
 
         if (authentication.isAuthenticated()) {
             String token = tokenUtils.gerarToken(authentication);
 
             Cookie cookie = new Cookie("jwt", token);
+            cookie.setPath("/");
             response.addCookie(cookie);
 
             UserJpa userJpa = (UserJpa) authentication.getPrincipal();
