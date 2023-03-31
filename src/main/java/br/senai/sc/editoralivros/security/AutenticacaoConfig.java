@@ -84,7 +84,7 @@ public class AutenticacaoConfig {
             httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
             // Faz com que antes de qualquer requisição é necessário passar pelo filtro
-            httpSecurity.addFilterBefore(new AutenticacaoFiltro(jpaService, new TokenUtils()), UsernamePasswordAuthenticationFilter.class);
+            httpSecurity.addFilterBefore(new AutenticacaoFiltro(new TokenUtils(), jpaService), UsernamePasswordAuthenticationFilter.class);
 
             return httpSecurity.build();
         } catch (Exception e) {
