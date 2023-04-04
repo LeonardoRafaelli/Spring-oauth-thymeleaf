@@ -16,14 +16,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
-@Controller
+@RestController
 @RequestMapping("/editora-livros-api/livro")
+@EnableSwagger2
 public class LivroController {
 
     private LivroService livroService;

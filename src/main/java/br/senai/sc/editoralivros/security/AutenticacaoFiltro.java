@@ -23,12 +23,16 @@ public class AutenticacaoFiltro extends OncePerRequestFilter {
         if (
                 request.getRequestURI().equals("/login") ||
                         request.getRequestURI().equals("/login/auth") ||
-                        request.getRequestURI().equals("/logout")
+                        request.getRequestURI().equals("/logout") ||
+                        request.getRequestURI().startsWith("/swagger-ui") ||
+                        request.getRequestURI().startsWith("/v3/api-docs") ||
+                        request.getRequestURI().equals("/swagger-ui.html") ||
+                        request.getRequestURI().startsWith("/webjars")
         ) {
             filterChain.doFilter(request, response);
             return;
         }
-
+        System.out.println("HEEERE " + request.getRequestURI());
         // Dessa forma precisamos add no header da request o token do usuário,
         // mas podemos fazer com que a API busque o cookie que contém o token
 //        String token = request.getHeader("Authorization");

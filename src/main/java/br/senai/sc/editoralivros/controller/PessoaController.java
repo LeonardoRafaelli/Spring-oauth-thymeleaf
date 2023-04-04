@@ -11,13 +11,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
-@Controller
+@RestController
 @RequestMapping("/editora-livros-api/pessoa")
+@EnableSwagger2
 public class PessoaController {
     private PessoaService pessoaService;
 
